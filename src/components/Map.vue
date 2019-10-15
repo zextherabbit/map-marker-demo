@@ -7,6 +7,8 @@
 
 <script>
 import Markers from "./Markers";
+import { mapGetters, mapActions } from "vuex";
+
 export default {
   name: "Map",
   props: [],
@@ -14,54 +16,70 @@ export default {
     Markers
   },
   data() {
-    return {
-      markers: [],
-      markerColors: ["yellow", "green", "blue", "purple", "red"],
-      colorUrl: "http://maps.google.com/mapfiles/ms/icons/",
-      markersId: 0,
-      map: {}
-    };
+    return {};
   },
-  created() {},
+  computed: {
+    ...mapGetters({
+      markers: "getMarkers",
+      center: "getCenter",
+      markerColors: "getMarkerColors",
+      zoom: "getZoom"
+    })
+  },
   mounted() {
     this.map = new google.maps.Map(this.$refs.map, {
-      center: { lat: -34.397, lng: 150.644 },
-      zoom: 8,
+      center: this.center,
+      zoom: this.zoom,
       streetViewControl: false,
       mapTypeControl: false,
       mapTypeId: google.maps.MapTypeId.ROADMAP
     });
-    this.setMapLClickListener(this.map, this.markers, this.markersId);
+    this.setMapClickListener(this.map, this.markers, this.markerColors);
   },
   methods: {
-    setMapLClickListener(map, markers, markersId) {
+    ...mapActions({
+      setUserCenter: "setUserCenter",
+      addMarker: "addMarker",
+      updateMarkerColor: "updateMarkerColor",
+      removeMarker: "removeMarker"
+    }),
+    setMapClickListener(map, markers, markersColors) {
       map.addListener("click", e => {
-        this.createMarker(e.latLng, map, markers, markersId);
+        this.createMarker(e.latLng, map, markers, markersColors);
       });
     },
-    createMarker(position, map, markers, markersId) {
+    getMarkerImage(imgColor, markersColors) {
+      return require(`../assets/${markersColors[imgColor]}_48x48.png`);
+    },
+    createMarker(position, map, markers, markersColors) {
+      let imgColor = 0;
       let marker = new google.maps.Marker({
         position: position,
         map: map,
-        icon: "http://maps.google.com/mapfiles/ms/icons/red-dot.png"
+        icon: this.getMarkerImage(imgColor, markersColors)
       });
       marker.addListener("rightclick", e => {
         markers.forEach(m => {
-          if (m.position === e.latLng) {
-            m.setMap(null);
-            markers.splice(markers.indexOf(m), 1);
+          if (m.marker.position === e.latLng) {
+            m.marker.setMap(null);
+            this.removeMarker(m.marker);
           }
         });
       });
       marker.addListener("click", e => {
         markers.forEach(m => {
-          if (m.position === e.latLng) {
-            let img = require(`../assets/${color[2]}_48x48.png`);
-            m.setIcon(img);
+          if (m.marker.position === e.latLng) {
+            ++imgColor;
+            if (markersColors.length <= imgColor) imgColor = 0;
+            m.marker.setIcon(this.getMarkerImage(imgColor, markersColors));
+            this.updateMarkerColor({
+              marker: markers.indexOf(m),
+              color: this.getMarkerImage(imgColor, markersColors)
+            });
           }
         });
       });
-      markers.push(marker);
+      this.addMarker({ marker, color: markersColors[imgColor] });
     }
   }
 };
