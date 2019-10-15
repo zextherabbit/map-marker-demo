@@ -2,12 +2,12 @@ const addMarker = ({commit}, marker) => {
   commit('setMarker', marker);
 }
 
-const updateMarkerColor = ({commit}, { marker, color }) => {
-  commit('updateMarkerColor', { marker, color });
+const updateMarkerColor = ({commit}, { markerIndex, color }) => {
+  commit('updateMarkerColor', { markerIndex, color });
 }
 
-const removeMarker = ({ commit }, marker) => {
-  commit('removeMarker', marker);
+const removeMarker = ({ commit }, markerIndex) => {
+  commit('removeMarker', markerIndex);
 }
 
 const setCenter = ({commit}, center) => {

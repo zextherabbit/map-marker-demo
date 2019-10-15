@@ -10,7 +10,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     markers: [],
-    markerColors: ["blue", "green", "purple", "red", "yellow"],
+    markerColors: ["blue", "green", "purple", "red"],
     center: { lat: 38.889931, lng: -77.009003 },
     zoom: 12
   },
