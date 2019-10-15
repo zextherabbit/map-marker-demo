@@ -27,6 +27,7 @@ export default {
     })
   },
   mounted() {
+    this.restoreCenter();
     this.map = new google.maps.Map(this.$refs.map, {
       center: this.center,
       zoom: this.zoom,
@@ -35,34 +36,45 @@ export default {
       mapTypeId: google.maps.MapTypeId.ROADMAP
     });
     this.setMapClickListener(this.map, this.markers, this.markerColors);
+    this.restoreMarkersFromLocalStorage(
+      this.map,
+      this.markers,
+      this.markerColors
+    );
   },
   methods: {
     ...mapActions({
       setUserCenter: "setUserCenter",
       addMarker: "addMarker",
       updateMarkerColor: "updateMarkerColor",
-      removeMarker: "removeMarker"
+      removeMarker: "removeMarker",
+      setCenter: "setCenter"
     }),
     setMapClickListener(map, markers, markersColors) {
       map.addListener("click", e => {
         this.createMarker(e.latLng, map, markers, markersColors);
       });
+      map.addListener("center_changed", _ => {
+        this.setCenter(map.getCenter());
+      });
     },
     getMarkerImage(imgColor, markersColors) {
       return require(`../assets/${markersColors[imgColor]}_48x48.png`);
     },
-    createMarker(position, map, markers, markersColors) {
+    createMarker(position, map, markers, markersColors, cashedColor) {
       let imgColor = 0;
       let marker = new google.maps.Marker({
         position: position,
         map: map,
-        icon: this.getMarkerImage(imgColor, markersColors)
+        icon: cashedColor
+          ? cashedColor
+          : this.getMarkerImage(imgColor, markersColors)
       });
       marker.addListener("rightclick", e => {
         markers.forEach(m => {
           if (m.marker.position === e.latLng) {
             m.marker.setMap(null);
-            this.removeMarker(m.marker);
+            this.removeMarker(markers.indexOf(m));
           }
         });
       });
@@ -79,7 +91,30 @@ export default {
           }
         });
       });
-      this.addMarker({ marker, color: markersColors[imgColor] });
+      this.addMarker({
+        marker,
+        color: this.getMarkerImage(imgColor, markersColors)
+      });
+    },
+    restoreMarkersFromLocalStorage(map, markers, markersColors) {
+      if (localStorage.length > 0 && markers.length === 0) {
+        for (let i = 0; i <= localStorage.length; i++) {
+          let marker = JSON.parse(localStorage.getItem(i));
+          if (marker)
+            this.createMarker(
+              marker.position,
+              map,
+              markers,
+              markersColors,
+              marker.color
+            );
+        }
+      }
+    },
+    restoreCenter() {
+      if (localStorage.getItem("center")) {
+        this.setCenter(JSON.parse(localStorage.getItem("center")));
+      }
     }
   }
 };
