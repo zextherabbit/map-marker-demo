@@ -3,14 +3,13 @@
     <div class="button-holder" v-show="active === false">
       <button id="batch-button" @click="activateTexArea">Add Markers</button>
     </div>
-    <div class="markers-holder" v-show="active">
+    <div class="markers-holder" v-show="active" tabindex="0" @blur="hideBatch" ref="markers">
       <textarea
         id="batch-markers"
         type="text"
         placeholder="Batch Add example (43.222,25.222,green)"
         v-model="markersBatch"
         ref="markersArea"
-        @blur="active = false"
       ></textarea>
       <button id="add-button" @click="addMarkers">Add</button>
     </div>
@@ -96,9 +95,23 @@ export default {
       } else color = input;
       return color;
     },
+    hideBatch(event) {
+      let target = event.target;
+      let explicitTarget = event.explicitOriginalTarget;
+
+      for(let child of target.children){
+        if(explicitTarget === child) return;  
+      }
+      this.active = false;
+      // if(event.explicitOriginalTarget == event.target.children[event.target.children.indexOf(event.explicitOriginalTarget)]){
+      //   console.log('button');
+      // }
+    },
     activateTexArea() {
       this.active = true;
-      this.$refs.markersArea.focus();
+      setTimeout(() => {
+        this.$refs.markers.focus();
+      }, 200);
     }
   }
 };
