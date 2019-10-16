@@ -126,13 +126,21 @@ export default {
         content: markerInfo
       });
 
+      let infoWindowTimeout;
+
+      infoWindow.addListener("closeclick", _ => {
+        clearTimeout(infoWindowTimeout);
+      });
+
       marker.addListener("rightclick", e => {
         this.deleteMarker(e);
       });
 
-      marker.addListener("dblclick", e => {
-        this.deleteMarker(e);
-      });
+      if (this.isMobileDevice()) {
+        marker.addListener("dblclick", e => {
+          this.deleteMarker(e);
+        });
+      }
 
       marker.addListener("mouseover", e => {
         this.markers.forEach(m => {
@@ -145,7 +153,9 @@ export default {
       marker.addListener("mouseout", e => {
         this.markers.forEach(m => {
           if (m.marker.position === e.latLng) {
-            infoWindow.close();
+            infoWindowTimeout = setTimeout(() => {
+              infoWindow.close();
+            }, 3000);
           }
         });
       });
@@ -191,6 +201,30 @@ export default {
     restoreZoom() {
       if (localStorage.getItem("zoom")) {
         this.setZoom(parseInt(JSON.parse(localStorage.getItem("zoom"))));
+      }
+    },
+
+    isMobileDevice() {
+      let useragent = navigator.userAgent;
+
+      if (useragent.match(/Android/i)) {
+        return "android";
+      } else if (useragent.match(/webOS/i)) {
+        return "webos";
+      } else if (useragent.match(/iPhone/i)) {
+        return "iphone";
+      } else if (useragent.match(/iPod/i)) {
+        return "ipod";
+      } else if (useragent.match(/iPad/i)) {
+        return "ipad";
+      } else if (useragent.match(/Windows Phone/i)) {
+        return "windows phone";
+      } else if (useragent.match(/SymbianOS/i)) {
+        return "symbian";
+      } else if (useragent.match(/RIM/i) || useragent.match(/BB/i)) {
+        return "blackberry";
+      } else {
+        return false;
       }
     }
   }
