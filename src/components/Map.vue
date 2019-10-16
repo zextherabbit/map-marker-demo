@@ -44,7 +44,8 @@ export default {
 
     this.map = new google.maps.Map(this.$refs.map, {
       center: this.center,
-      zoom: this.zoom
+      zoom: this.zoom,
+      fullscreenControl: false
     });
 
     this.setMapClickListener();
