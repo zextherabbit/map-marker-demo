@@ -10,8 +10,9 @@
         placeholder="Batch Add example (43.222,25.222,green)"
         v-model="markersBatch"
         ref="markersArea"
+        @blur="hideBatchFromText"
       ></textarea>
-      <button id="add-button" @click="addMarkers">Add</button>
+      <button id="add-button" @click="addMarkers" ref="addButton">Add</button>
     </div>
   </div>
 </template>
@@ -95,17 +96,23 @@ export default {
       } else color = input;
       return color;
     },
+    hideBatchFromText(event){
+      let explicitTarget = event.relatedTarget;
+      if(explicitTarget === this.$refs.addButton) return;
+      this.active = false;
+    },
     hideBatch(event) {
       let target = event.target;
-      let explicitTarget = event.explicitOriginalTarget;
-
+      let explicitTarget = event.relatedTarget;
+      if(explicitTarget === target){
+        return;
+      }
       for(let child of target.children){
-        if(explicitTarget === child) return;  
+        if(explicitTarget === child){
+          return;
+        }
       }
       this.active = false;
-      // if(event.explicitOriginalTarget == event.target.children[event.target.children.indexOf(event.explicitOriginalTarget)]){
-      //   console.log('button');
-      // }
     },
     activateTexArea() {
       this.active = true;
