@@ -30,12 +30,11 @@ export default {
 
 <style scoped>
 .errors-wrapper {
-  width: 500px;
+  width: 50%;
   height: 50px;
   position: absolute;
   z-index: 1;
-  left: 50%;
-  margin-left: -200px;
+  left: 25%;
   margin-top: 2px;
 }
 
@@ -63,6 +62,8 @@ export default {
   position: absolute;
   right: 0;
   border: none;
+  padding-right: 10px;
+  padding-left: 10px;
   background-color: transparent;
   cursor: pointer;
   color: white;
