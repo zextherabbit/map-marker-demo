@@ -41,6 +41,7 @@ export default {
 
 .error {
   display: flex;
+  justify-content: center;
   background-color: #cc0000;
   border: 0px none;
   border-radius: 2px;
@@ -59,8 +60,8 @@ export default {
 }
 
 #close-button {
-  position: relative;
-  float: right;
+  position: absolute;
+  right: 0;
   border: none;
   background-color: transparent;
   cursor: pointer;

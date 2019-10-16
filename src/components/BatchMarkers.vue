@@ -10,6 +10,7 @@
         placeholder="Batch Add example (43.222,25.222,green)"
         v-model="markersBatch"
         ref="markersArea"
+        @blur="active = false"
       ></textarea>
       <button id="add-button" @click="addMarkers">Add</button>
     </div>
@@ -29,9 +30,7 @@ export default {
     };
   },
   created() {},
-  mounted() {
-    this.$refs.markersArea.focus();
-  },
+  mounted() {},
   computed: {
     ...mapGetters({
       markerColors: "getMarkerColors",
@@ -99,6 +98,7 @@ export default {
     },
     activateTexArea() {
       this.active = true;
+      this.$refs.markersArea.focus();
     }
   }
 };
