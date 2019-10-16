@@ -1,22 +1,27 @@
 <template>
   <div class="maps-wrapper">
-    <BatchMarkers v-on:addBatchMarker="addBatchMarkers" />
+    <BatchMarkers v-on:addBatchMarker="addBatchMarkers" :errors="hasErrors"/>
+    <DisplayErrors v-show="hasErrors !== null" :errors="hasErrors"/>
     <div id="map-holder" ref="map"></div>
   </div>
 </template>
 
 <script>
 import BatchMarkers from "./BatchMarkers";
+import DisplayErrors from "./DisplayErrors";
 import { mapGetters, mapActions } from "vuex";
 
 export default {
   name: "Map",
   props: [],
   components: {
-    BatchMarkers
+    BatchMarkers,
+    DisplayErrors
   },
   data() {
-    return {};
+    return {
+      hasErrors: []
+    };
   },
   computed: {
     ...mapGetters({
@@ -49,9 +54,16 @@ export default {
       setZoom: "setZoom"
     }),
 
+    displayErrors(){
+
+    },
+
     addBatchMarkers(markers) {
       markers.forEach(marker => {
-        let color = this.getMarkerImage(this.markerColors.indexOf(marker.color), this.markerColors);
+        let color = this.getMarkerImage(
+          this.markerColors.indexOf(marker.color),
+          this.markerColors
+        );
         this.createMarker(
           new google.maps.LatLng(marker.lat, marker.lng),
           this.map,
@@ -78,6 +90,7 @@ export default {
 
     createMarker(position, map, markers, markersColors, chosenColor) {
       let imgColor = 0;
+
       let marker = new google.maps.Marker({
         position: position,
         map: map,

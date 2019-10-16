@@ -7,7 +7,7 @@
       <textarea
         id="batch-markers"
         type="text"
-        placeholder="Add Multiple Markers(, seperated)"
+        placeholder="Batch Add example (43.222,25.222,green)"
         v-model="markersBatch"
         ref="markersArea"
       ></textarea>
@@ -20,6 +20,7 @@
 import { mapActions, mapGetters } from "vuex";
 export default {
   name: "BatchMarkers",
+  props: ["errors"],
   components: {},
   data() {
     return {
@@ -45,24 +46,56 @@ export default {
       this.active = false;
     },
     getBatchMarkers(input) {
-      const lines = input
+      return input
         .split("\n")
         .filter(el => {
-          if (el) return el;
+          if (el) {
+            return el;
+          } else {
+            this.errors.push({
+              errorLvl: 0,
+              errorText: "Invalid input, empty line"
+            });
+          }
         })
         .map(line => line.split(","))
         .map(val => {
           if (!isNaN(val[0]) && !isNaN(val[1])) {
-            console.log(this.markerColors);
+            if (val.length > 2) {
+              this.errors.push({
+                errorLvl: 1,
+                errorText: `Please use correct format, added marker for lat:${val[0].trim()}, lng:${val[1].trim()}`
+              });
+            }
+            let color = this.colorPick(val[2]);
             return {
               lat: parseFloat(val[0].trim()),
               lng: parseFloat(val[1].trim()),
-              color: this.markerColors.indexOf(val[2].trim()) !== -1 ? val[2].trim() : "blue"
+              color
             };
+          } else {
+            this.errors.push({
+              errorLvl: 0,
+              errorText: "Latitude or longitude must be valid numbers"
+            });
           }
         })
-        .filter(el => { if(el) return el});
-      return lines;
+        .filter(el => {
+          if (el) return el;
+        });
+    },
+    colorPick(input) {
+      let color;
+      if (!input) {
+        color = "blue";
+      } else if (input && this.markerColors.indexOf(input.trim()) === -1) {
+        this.errors.push({
+          errorLvl: 1,
+          errorText: "Color not found, added default color"
+        });
+        color = "blue";
+      } else color = input;
+      return color;
     },
     activateTexArea() {
       this.active = true;
@@ -97,7 +130,7 @@ export default {
 }
 
 .markers-holder {
-  width: 400px;
+  width: 350px;
   height: 200px;
   display: flex;
   flex-direction: column;
@@ -107,7 +140,7 @@ export default {
 }
 
 #batch-markers {
-  height: 200px;
+  height: 100%;
   background: transparent;
   padding: 5px;
   font: 400 18px Roboto, Arial, sans-serif;
