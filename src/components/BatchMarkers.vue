@@ -7,7 +7,7 @@
       <textarea
         id="batch-markers"
         type="text"
-        placeholder="Batch Add example (43.222,25.222,green)"
+        placeholder="Add your markers"
         v-model="markersBatch"
         ref="markersArea"
         @blur="hideBatchFromText"
@@ -122,19 +122,19 @@ export default {
     },
     hideBatchFromText(event) {
       this.fireDisableEvent();
-      let explicitTarget = event.relatedTarget;
-      if (explicitTarget === this.$refs.addButton) return;
+      let relatedTarget = event.relatedTarget;
+      if (relatedTarget === this.$refs.addButton) return;
       this.active = false;
     },
     hideBatch(event) {
       this.fireDisableEvent();
       let target = event.target;
-      let explicitTarget = event.relatedTarget;
-      if (explicitTarget === target) {
+      let relatedTarget = event.relatedTarget;
+      if (relatedTarget === target) {
         return;
       }
       for (let child of target.children) {
-        if (explicitTarget === child) {
+        if (relatedTarget === child) {
           return;
         }
       }

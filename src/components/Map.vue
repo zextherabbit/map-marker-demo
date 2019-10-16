@@ -155,7 +155,7 @@ export default {
           if (m.marker.position === e.latLng) {
             infoWindowTimeout = setTimeout(() => {
               infoWindow.close();
-            }, 3000);
+            }, 5000);
           }
         });
       });
