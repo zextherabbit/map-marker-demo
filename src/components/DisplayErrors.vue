@@ -30,7 +30,7 @@ export default {
 
 <style scoped>
 .errors-wrapper {
-  width: 400px;
+  width: 500px;
   height: 50px;
   position: absolute;
   z-index: 1;
@@ -46,7 +46,7 @@ export default {
   border: 0px none;
   border-radius: 2px;
   margin: 2px;
-  padding: 5px;
+  padding: 10px;
   box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
 }
 
