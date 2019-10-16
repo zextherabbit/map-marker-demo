@@ -27,7 +27,7 @@ export default {
     return {
       hasErrors: [],
       map: null,
-      disable: true
+      disable: false
     };
   },
   computed: {
@@ -80,8 +80,7 @@ export default {
 
     setMapClickListener() {
       this.map.addListener("click", e => {
-        if(!this.disable)
-          this.createMarker(e.latLng);
+        if (!this.disable) this.createMarker(e.latLng);
       });
       this.map.addListener("center_changed", _ => {
         this.setCenter(this.map.getCenter());
@@ -93,8 +92,29 @@ export default {
       return require(`../assets/${this.markerColors[imgColor]}_48x48.png`);
     },
 
-    createMarker(position, chosenColor) {
+    mrkerInfoWindow(title, lat, lng) {
+      const creationData = new Date().toLocaleString();
+      return `<div id="content"><h1>Marker nb: ${title}</h1><p>Latitude: ${lat}</p><p>Longitude: ${lng}</p><p>Created at: <p>${creationData}</p></p></div>`;
+    },
+
+    removeMarker(e) {
+      this.markers.forEach(m => {
+        if (m.marker.position === e.latLng) {
+          m.marker.setMap(null);
+          this.removeMarker(this.markers.indexOf(m));
+        }
+      });
+    },
+
+    createMarker(position, chosenColor, info) {
       let imgColor = 0;
+      let markerInfo =
+        info ||
+        this.mrkerInfoWindow(
+          this.markers.length + 1,
+          position.lat(),
+          position.lng()
+        );
 
       let marker = new google.maps.Marker({
         position: position,
@@ -102,33 +122,52 @@ export default {
         icon: chosenColor ? chosenColor : this.getMarkerImage(imgColor)
       });
 
+      let infoWindow = new google.maps.InfoWindow({
+        content: markerInfo
+      });
+
       marker.addListener("rightclick", e => {
+        this.removeMarker(e);
+      });
+
+      marker.addListener("dblclick", e => {
+        this.removeMarker(e);
+      });
+
+      marker.addListener("mouseover", e => {
         this.markers.forEach(m => {
           if (m.marker.position === e.latLng) {
-            m.marker.setMap(null);
-            this.removeMarker(this.markers.indexOf(m));
+            infoWindow.open(this.map, m.marker);
+          }
+        });
+      });
+
+      marker.addListener("mouseout", e => {
+        this.markers.forEach(m => {
+          if (m.marker.position === e.latLng) {
+            infoWindow.close();
           }
         });
       });
 
       marker.addListener("click", e => {
         this.markers.forEach(m => {
-          if (document.get)
-            if (m.marker.position === e.latLng) {
-              imgColor++;
-              if (this.markerColors.length <= imgColor) imgColor = 0;
-              m.marker.setIcon(this.getMarkerImage(imgColor));
-              this.updateMarkerColor({
-                markerIndex: this.markers.indexOf(m),
-                color: this.getMarkerImage(imgColor)
-              });
-            }
+          if (m.marker.position === e.latLng) {
+            imgColor++;
+            if (this.markerColors.length <= imgColor) imgColor = 0;
+            m.marker.setIcon(this.getMarkerImage(imgColor));
+            this.updateMarkerColor({
+              markerIndex: this.markers.indexOf(m),
+              color: this.getMarkerImage(imgColor)
+            });
+          }
         });
       });
 
       this.addMarker({
         marker,
-        color: chosenColor ? chosenColor : this.getMarkerImage(imgColor)
+        color: chosenColor ? chosenColor : this.getMarkerImage(imgColor),
+        info: markerInfo
       });
     },
 
@@ -137,7 +176,7 @@ export default {
         for (let i = 0; i <= localStorage.length; i++) {
           if (JSON.parse(localStorage.getItem(i))) {
             let marker = JSON.parse(localStorage.getItem(i));
-            this.createMarker(marker.position, marker.color);
+            this.createMarker(marker.position, marker.color, marker.info);
           }
         }
       }

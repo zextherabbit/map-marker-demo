@@ -54,18 +54,18 @@ export default {
 }
 
 #error-text {
+  text-align: center;
   font-style: italic;
   color: white;
+  margin-left: auto;
 }
 
 #close-button {
-  position: absolute;
-  right: 0;
+  position: relative;
   border: none;
-  padding-right: 10px;
-  padding-left: 10px;
   background-color: transparent;
   cursor: pointer;
   color: white;
+  margin-left: auto;
 }
 </style>

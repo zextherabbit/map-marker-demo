@@ -1,6 +1,6 @@
 const setMarker = (state, marker) => {
   state.markers.push(marker);
-  localStorage.setItem(state.markers.indexOf(marker).toString(), JSON.stringify({ position: marker.marker.position, color: marker.color }));
+  localStorage.setItem(state.markers.indexOf(marker).toString(), JSON.stringify({ position: marker.marker.position, color: marker.color, info: marker.info }));
 }
 
 const removeMarker = (state, markerIndex) => {
@@ -11,7 +11,7 @@ const removeMarker = (state, markerIndex) => {
   })
   state.markers.splice(markerIndex, 1);
   state.markers.forEach((marker, index) => {
-    localStorage.setItem(index.toString(), JSON.stringify({ position: marker.marker.position, color: marker.color }));
+    localStorage.setItem(index.toString(), JSON.stringify({ position: marker.marker.position, color: marker.color, info: marker.info }));
   })
 }
 
@@ -27,7 +27,7 @@ const setZoom = (state, zoom) => {
 
 const updateMarkerColor = (state, { markerIndex, color }) => {
   state.markers[markerIndex].color = color;
-  localStorage.setItem(markerIndex, JSON.stringify({ position: state.markers[markerIndex].marker.position, color }));
+  localStorage.setItem(markerIndex, JSON.stringify({ position: state.markers[markerIndex].marker.position, color, info: state.markers[markerIndex].info }));
 }
 
 export default {
