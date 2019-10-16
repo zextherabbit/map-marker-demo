@@ -21,7 +21,7 @@
 import { mapActions, mapGetters } from "vuex";
 export default {
   name: "BatchMarkers",
-  props: ["errors"],
+  props: ["errors", "mapObj"],
   components: {},
   data() {
     return {
@@ -60,7 +60,7 @@ export default {
         .map(line => line.split(","))
         .map(val => {
           if (!isNaN(val[0]) && !isNaN(val[1])) {
-            if (val.length > 2) {
+            if (val.length > 3) {
               this.errors.push({
                 errorLvl: 1,
                 errorText: `Please use correct format, added marker for lat:${val[0].trim()}, lng:${val[1].trim()}`
@@ -96,19 +96,27 @@ export default {
       } else color = input;
       return color;
     },
-    hideBatchFromText(event){
+    fireDisableEvent() {
+      this.$emit("disableMapClick", true);
+      setTimeout(() => {
+        this.$emit("disableMapClick", false);
+      },500);
+    },
+    hideBatchFromText(event) {
+      this.fireDisableEvent();
       let explicitTarget = event.relatedTarget;
-      if(explicitTarget === this.$refs.addButton) return;
+      if (explicitTarget === this.$refs.addButton) return;
       this.active = false;
     },
     hideBatch(event) {
+      this.fireDisableEvent();
       let target = event.target;
       let explicitTarget = event.relatedTarget;
-      if(explicitTarget === target){
+      if (explicitTarget === target) {
         return;
       }
-      for(let child of target.children){
-        if(explicitTarget === child){
+      for (let child of target.children) {
+        if (explicitTarget === child) {
           return;
         }
       }

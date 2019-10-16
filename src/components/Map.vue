@@ -1,7 +1,12 @@
 <template>
   <div class="maps-wrapper">
-    <BatchMarkers v-on:addBatchMarker="addBatchMarkers" :errors="hasErrors"/>
-    <DisplayErrors v-show="hasErrors !== null" :errors="hasErrors"/>
+    <BatchMarkers
+      v-on:addBatchMarker="addBatchMarkers"
+      :errors="hasErrors"
+      :mapObj="map"
+      v-on:disableMapClick="disableClick"
+    />
+    <DisplayErrors v-show="hasErrors !== null" :errors="hasErrors" />
     <div id="map-holder" ref="map"></div>
   </div>
 </template>
@@ -21,7 +26,8 @@ export default {
   data() {
     return {
       hasErrors: [],
-      map: null
+      map: null,
+      disable: true
     };
   },
   computed: {
@@ -55,8 +61,8 @@ export default {
       setZoom: "setZoom"
     }),
 
-    displayErrors(){
-
+    disableClick(disable) {
+      this.disable = disable;
     },
 
     addBatchMarkers(markers) {
@@ -74,7 +80,8 @@ export default {
 
     setMapClickListener() {
       this.map.addListener("click", e => {
-        this.createMarker(e.latLng);
+        if(!this.disable)
+          this.createMarker(e.latLng);
       });
       this.map.addListener("center_changed", _ => {
         this.setCenter(this.map.getCenter());
@@ -92,9 +99,7 @@ export default {
       let marker = new google.maps.Marker({
         position: position,
         map: this.map,
-        icon: chosenColor
-          ? chosenColor
-          : this.getMarkerImage(imgColor)
+        icon: chosenColor ? chosenColor : this.getMarkerImage(imgColor)
       });
 
       marker.addListener("rightclick", e => {
@@ -108,23 +113,22 @@ export default {
 
       marker.addListener("click", e => {
         this.markers.forEach(m => {
-          if (m.marker.position === e.latLng) {
-            imgColor++;
-            if (this.markerColors.length <= imgColor) imgColor = 0;
-            m.marker.setIcon(this.getMarkerImage(imgColor));
-            this.updateMarkerColor({
-              markerIndex: this.markers.indexOf(m),
-              color: this.getMarkerImage(imgColor)
-            });
-          }
+          if (document.get)
+            if (m.marker.position === e.latLng) {
+              imgColor++;
+              if (this.markerColors.length <= imgColor) imgColor = 0;
+              m.marker.setIcon(this.getMarkerImage(imgColor));
+              this.updateMarkerColor({
+                markerIndex: this.markers.indexOf(m),
+                color: this.getMarkerImage(imgColor)
+              });
+            }
         });
       });
 
       this.addMarker({
         marker,
-        color: chosenColor
-          ? chosenColor
-          : this.getMarkerImage(imgColor)
+        color: chosenColor ? chosenColor : this.getMarkerImage(imgColor)
       });
     },
 
@@ -133,10 +137,7 @@ export default {
         for (let i = 0; i <= localStorage.length; i++) {
           if (JSON.parse(localStorage.getItem(i))) {
             let marker = JSON.parse(localStorage.getItem(i));
-            this.createMarker(
-              marker.position,
-              marker.color
-            );
+            this.createMarker(marker.position, marker.color);
           }
         }
       }
