@@ -97,7 +97,7 @@ export default {
       return `<div id="content"><h1>Marker nb: ${title}</h1><p>Latitude: ${lat}</p><p>Longitude: ${lng}</p><p>Created at: <p>${creationData}</p></p></div>`;
     },
 
-    removeMarker(e) {
+    deleteMarker(e) {
       this.markers.forEach(m => {
         if (m.marker.position === e.latLng) {
           m.marker.setMap(null);
@@ -127,11 +127,11 @@ export default {
       });
 
       marker.addListener("rightclick", e => {
-        this.removeMarker(e);
+        this.deleteMarker(e);
       });
 
       marker.addListener("dblclick", e => {
-        this.removeMarker(e);
+        this.deleteMarker(e);
       });
 
       marker.addListener("mouseover", e => {
