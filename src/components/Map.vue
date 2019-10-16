@@ -94,7 +94,7 @@ export default {
 
     mrkerInfoWindow(title, lat, lng) {
       const creationData = new Date().toLocaleString();
-      return `<div id="content"><h1>Marker nb: ${title}</h1><p>Latitude: ${lat}</p><p>Longitude: ${lng}</p><p>Created at: <p>${creationData}</p></p></div>`;
+      return `<div id="content"><h1>Marker No: ${title}</h1><p>Latitude: ${lat}</p><p>Longitude: ${lng}</p><p>Created at: <p>${creationData}</p></p></div>`;
     },
 
     deleteMarker(e) {

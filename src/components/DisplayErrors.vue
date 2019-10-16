@@ -67,5 +67,7 @@ export default {
   cursor: pointer;
   color: white;
   margin-left: auto;
+  font-weight: 600;
+  font-size: large;
 }
 </style>

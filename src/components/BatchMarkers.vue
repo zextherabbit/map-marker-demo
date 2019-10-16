@@ -12,7 +12,10 @@
         ref="markersArea"
         @blur="hideBatchFromText"
       ></textarea>
-      <button id="add-button" @click="addMarkers" ref="addButton">Add</button>
+      <div>
+        <button id="add-button" @click="addMarkers" ref="addButton">Add</button>
+        <button id="close-button" @click="active = false">Close</button>
+      </div>
     </div>
   </div>
 </template>
@@ -100,7 +103,7 @@ export default {
       this.$emit("disableMapClick", true);
       setTimeout(() => {
         this.$emit("disableMapClick", false);
-      },500);
+      }, 500);
     },
     hideBatchFromText(event) {
       this.fireDisableEvent();
@@ -158,9 +161,10 @@ export default {
 }
 
 .markers-holder {
-  width: 350px;
-  height: 200px;
+  width: 300px;
+  height: 180px;
   display: flex;
+  justify-content: center;
   flex-direction: column;
   font-family: sans-serif;
   box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
@@ -169,14 +173,17 @@ export default {
 
 #batch-markers {
   height: 100%;
-  background: transparent;
   padding: 5px;
+  background: rgba(0, 0, 0, 0) none repeat scroll 0% 0%;
+  box-shadow: rgba(0, 0, 0, 0.5) 0px 1px 4px -1px;
   font: 400 18px Roboto, Arial, sans-serif;
   border: none;
   resize: none;
 }
 
-#add-button {
+#add-button,
+#close-button {
+  width: 50%;
   background: rgba(0, 0, 0, 0) none repeat scroll 0% 0%;
   font: 400 18px Roboto, Arial, sans-serif;
   border: 0px none;
