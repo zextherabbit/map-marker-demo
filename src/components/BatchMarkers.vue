@@ -17,6 +17,20 @@
         <button id="close-button" @click="active = false">Close</button>
       </div>
     </div>
+    <div class="tooltip-wrapper">
+      <div class="tooltip">
+        &#9432;
+        <div class="top">
+          <h3>How to batch add</h3>
+          <ul>
+            <li>Input your marker in format (43.2222,23.2222,blue)</li>
+            <li>You can input multiple markers, juts break them each in seperate line</li>
+            <li>Colors to choose from are : blue, green, purple and red</li>
+          </ul>
+          <i></i>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -86,6 +100,7 @@ export default {
           if (el) return el;
         });
     },
+    showTutorial() {},
     colorPick(input) {
       let color;
       if (!input) {
@@ -138,20 +153,22 @@ export default {
 <style scoped>
 .batch-marker-holder {
   position: absolute;
+  display: flex;
+  justify-content: center;
   z-index: 1;
   bottom: 0;
   left: 1;
   height: auto;
   margin-left: 10px;
   margin-bottom: 20px;
-  background: rgb(255, 255, 255);
+  background: transparent;
   border-radius: 2px;
 }
 
 #batch-button {
   width: 130px;
-  height: 50px;
-  background: rgba(0, 0, 0, 0) none repeat scroll 0% 0%;
+  height: 40px;
+  background: rgb(255, 255, 255);
   font: 400 18px Roboto, Arial, sans-serif;
   border: 0px none;
   border-radius: 2px;
@@ -167,6 +184,7 @@ export default {
   justify-content: center;
   flex-direction: column;
   font-family: sans-serif;
+  background: rgb(255, 255, 255);
   box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
   white-space: nowrap;
 }
@@ -191,5 +209,66 @@ export default {
   padding: 2px;
   box-shadow: rgba(0, 0, 0, 0.5) 0px 1px 4px -1px;
   cursor: pointer;
+}
+
+.tooltip-wrapper{
+  margin-left: 20px;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+
+.tooltip {
+  display: inline-block;
+  position: relative;
+  text-align: left;
+  padding: 8px;
+}
+
+.tooltip h3 {
+  margin: 12px 0;
+}
+
+.tooltip .top {
+  width: 380px;
+  top: -20px;
+  left: 50%;
+  transform: translate(-30%, -100%);
+  padding: 10px 20px;
+  color: #ffffff;
+  background-color: #009cdc;
+  font-weight: normal;
+  font-size: 14px;
+  border-radius: 8px;
+  position: absolute;
+  z-index: 99999999;
+  box-sizing: border-box;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
+  display: none;
+}
+
+.tooltip:hover .top {
+  display: block;
+}
+
+.tooltip .top i {
+  position: absolute;
+  top: 100%;
+  left: 30%;
+  margin-left: -15px;
+  width: 30px;
+  height: 15px;
+  overflow: hidden;
+}
+
+.tooltip .top i::after {
+  content: "";
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(45deg);
+  background-color: #009cdc;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
 }
 </style>
